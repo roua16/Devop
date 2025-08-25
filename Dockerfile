@@ -2,22 +2,15 @@
 FROM maven:3.9.9-amazoncorretto-17 AS build
 WORKDIR /app
 
-# Copier le pom.xml et télécharger les dépendances
-COPY pom.xml ./ 
+COPY pom.xml ./
 RUN mvn dependency:go-offline
 
-# Copier le code source
 COPY src ./src
-
-# Construire le projet
 RUN mvn clean package -DskipTests
 
 # Étape 2 : image finale
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Copier le jar depuis l'étape build
 COPY --from=build /app/target/*.jar app.jar
-
-# Lancer l'application
 ENTRYPOINT ["java", "-jar", "app.jar"]

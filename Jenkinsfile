@@ -7,6 +7,13 @@ pipeline {
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                echo "🧹 Nettoyage du workspace..."
+                deleteDir()  // nettoyer avant checkout
+            }
+        }
+
         stage('Checkout SCM') {
             steps {
                 echo "📥 Checkout du code..."
@@ -14,17 +21,10 @@ pipeline {
             }
         }
 
-        stage('Clean Workspace') {
-            steps {
-                echo "🧹 Nettoyage du workspace..."
-                deleteDir()
-            }
-        }
-
         stage('Build Maven') {
             steps {
                 echo "🔨 Compilation Maven..."
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn -f pom.xml clean package -DskipTests'
             }
         }
 
