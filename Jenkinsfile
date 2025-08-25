@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Définir les variables si besoin
         APP_NAME = "nova-backend"
         DOCKER_IMAGE = "monrepo/${APP_NAME}:latest"
     }
@@ -25,7 +24,8 @@ pipeline {
         stage('Build Maven') {
             steps {
                 echo "🔨 Compilation Maven..."
-                sh 'mvn -f NovaMind-backendfinaleroua/pom.xml clean package -DskipTests'
+                // Le pom.xml est maintenant à la racine
+                sh 'mvn -f pom.xml clean package -DskipTests'
             }
         }
 
