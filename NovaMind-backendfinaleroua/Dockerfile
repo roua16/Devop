@@ -1,28 +1,22 @@
 # Étape 1 : construire le projet avec Maven
 FROM maven:3.9.9-amazoncorretto-17 AS build
+
+# Répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copier tout le projet dans l'image
-COPY . .
+# Copier uniquement le dossier contenant le pom.xml
+COPY NovaMind-backendfinaleroua/NovaMind-backendfinaleroua/NovaMind-backendfinaleroua/ .
 
-# Vérifier que le pom.xml est bien là
-RUN ls -la /app
-
-# Télécharger les dépendances Maven
+# Télécharger les dépendances Maven pour être offline
 RUN mvn dependency:go-offline
 
-# Construire l'application sans tests
-RUN mvn clean package -DskipTests
+# Construire le projet
+RUN mvn package
 
-# Étape 2 : image finale avec OpenJDK
+# Étape 2 : créer l'image finale avec juste le jar
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-
-# Copier le jar construit depuis l'étape build
 COPY --from=build /app/target/*.jar app.jar
 
-# Exposer le port 8080
-EXPOSE 8080
-
-# Lancer l'application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Définir la commande de lancement
+ENTRYPOINT ["java","-jar","app.jar"]
