@@ -10,10 +10,10 @@ RUN mvn dependency:go-offline
 COPY NovaMind-backendfinaleroua/src ./src
 
 # Construire le projet
-RUN mvn package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Étape 2 : image finale
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copier le jar depuis l'étape build
