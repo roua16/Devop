@@ -19,3 +19,5 @@ COPY --from=build /app/target/*.jar app.jar
 
 # Lancer l'application
 ENTRYPOINT ["java","-jar","app.jar"]
+
+# update for Jenkins scan
