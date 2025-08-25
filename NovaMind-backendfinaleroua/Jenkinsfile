@@ -26,8 +26,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                // Forcer l'utilisation du Dockerfile corrigé
-                sh 'docker build --pull -f Dockerfile -t $IMAGE_NAME:$BUILD_NUMBER .'
+                sh 'docker build -f Dockerfile -t $IMAGE_NAME:$BUILD_NUMBER .'
                 sh 'docker tag $IMAGE_NAME:$BUILD_NUMBER $IMAGE_NAME:latest'
             }
         }

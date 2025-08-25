@@ -2,23 +2,17 @@
 FROM maven:3.9.9-amazoncorretto-17 AS build
 WORKDIR /app
 
-# Copier uniquement les fichiers essentiels pour Maven
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw . 
-COPY mvnw.cmd .
+# Copier tout le projet dans l'image
+COPY . .
 
-# Vérifier que le pom.xml est bien présent
+# Vérifier que le pom.xml est bien là
 RUN ls -la /app
 
 # Télécharger les dépendances Maven
-RUN ./mvnw dependency:go-offline
-
-# Copier seulement le code source
-COPY src ./src
+RUN mvn dependency:go-offline
 
 # Construire l'application sans tests
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Étape 2 : image finale avec OpenJDK
 FROM openjdk:17-jdk-slim
