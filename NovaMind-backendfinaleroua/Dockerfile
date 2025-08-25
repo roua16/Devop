@@ -2,11 +2,16 @@
 FROM maven:3.9.9-amazoncorretto-17 AS build
 WORKDIR /app
 
-# Copier le pom.xml et télécharger les dépendances
+# Copier uniquement le pom.xml
 COPY pom.xml .
+
+# Vérifier que le pom.xml est bien là
+RUN ls -la /app
+
+# Télécharger les dépendances
 RUN mvn dependency:go-offline
 
-# Copier le code source
+# Copier seulement le code source
 COPY src ./src
 
 # Construire l’application
