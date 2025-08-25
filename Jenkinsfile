@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = "nova-backend"
-        DOCKER_IMAGE = "roua211jft7404/${APP_NAME}:latest" // nom réel DockerHub
+        DOCKER_IMAGE = "roua211jft7404/${APP_NAME}:latest"
     }
 
     stages {
@@ -38,9 +38,13 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 echo "⬆️ Push de l’image Docker sur DockerHub..."
-                withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKERHUB_PASS')]) {
+                // Ici on utilise Username + Password
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', 
+                                                 usernameVariable: 'DOCKERHUB_USER', 
+                                                 passwordVariable: 'DOCKERHUB_PASS')]) {
                     sh '''
-                        echo $DOCKERHUB_PASS | docker login -u roua211jft7404 --password-stdin
+                        echo "Connexion à DockerHub..."
+                        echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
                         docker push $DOCKER_IMAGE
                     '''
                 }
