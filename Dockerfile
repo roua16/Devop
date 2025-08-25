@@ -2,12 +2,12 @@
 FROM maven:3.9.9-amazoncorretto-17 AS build
 WORKDIR /app
 
-# Copier le pom.xml pour télécharger les dépendances
-COPY NovaMind-backendfinaleroua/pom.xml ./ 
+# Copier le pom.xml et télécharger les dépendances
+COPY pom.xml ./ 
 RUN mvn dependency:go-offline
 
 # Copier le code source
-COPY NovaMind-backendfinaleroua/src ./src
+COPY src ./src
 
 # Construire le projet
 RUN mvn clean package -DskipTests

@@ -24,8 +24,7 @@ pipeline {
         stage('Build Maven') {
             steps {
                 echo "🔨 Compilation Maven..."
-                // Le pom.xml est maintenant à la racine
-                sh 'mvn -f pom.xml clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
