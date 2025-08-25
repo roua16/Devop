@@ -6,12 +6,14 @@ pipeline {
     stages {
         stage('Build Maven') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                // Maven build en ciblant le pom.xml dans NovaMind-backendfinaleroua
+                sh 'mvn -f NovaMind-backendfinaleroua/pom.xml clean package -DskipTests'
             }
         }
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME} ."
+                // Docker build en pointant sur le dossier qui contient le Dockerfile
+                sh "docker build -t ${IMAGE_NAME} NovaMind-backendfinaleroua/"
             }
         }
         stage('Push Docker Image') {
@@ -24,4 +26,3 @@ pipeline {
         }
     }
 }
-// update for Jenkins scan
