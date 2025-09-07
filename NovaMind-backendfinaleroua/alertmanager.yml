@@ -1,0 +1,12 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname']
+  receiver: 'dummy-receiver'
+
+receivers:
+  - name: 'dummy-receiver'
+    # Alertes affichées dans l'interface d'Alertmanager, pas besoin d'email réel
+    webhook_configs:
+      - url: "http://localhost:9093"  # juste pour tester le pipeline
