@@ -4,12 +4,11 @@ pipeline {
     environment {
         APP_NAME = "nova-backend"
         DOCKER_IMAGE = "roua211jft7404/${APP_NAME}:latest"
+        // SONARQUBE_TOKEN = credentials('sonarqube-token') // à activer si tu configures SonarQube
     }
 
     stages {
-        // -----------------------
         // 1️⃣ Nettoyage du workspace
-        // -----------------------
         stage('Clean Workspace') {
             steps {
                 echo "🧹 Nettoyage du workspace..."
@@ -17,9 +16,7 @@ pipeline {
             }
         }
 
-        // -----------------------
         // 2️⃣ Checkout du code depuis Git
-        // -----------------------
         stage('Checkout SCM') {
             steps {
                 echo "📥 Checkout du code..."
@@ -27,9 +24,7 @@ pipeline {
             }
         }
 
-        // -----------------------
         // 3️⃣ Build Maven
-        // -----------------------
         stage('Build Maven') {
             steps {
                 echo "🔨 Compilation Maven..."
@@ -37,9 +32,7 @@ pipeline {
             }
         }
 
-        // -----------------------
         // 4️⃣ Build Docker Image
-        // -----------------------
         stage('Build Docker Image') {
             steps {
                 echo "🐳 Build de l’image Docker..."
@@ -47,9 +40,7 @@ pipeline {
             }
         }
 
-        // -----------------------
         // 5️⃣ Push Docker Image sur DockerHub
-        // -----------------------
         stage('Push Docker Image') {
             steps {
                 echo "⬆️ Push de l’image Docker sur DockerHub..."
@@ -64,20 +55,15 @@ pipeline {
             }
         }
 
-        // -----------------------
-        // 6️⃣ Lancer Monitoring Stack
-        // Prometheus + Grafana + Alertmanager
-        // -----------------------
+        // 6️⃣ Lancer Monitoring Stack : Prometheus + Grafana + Alertmanager
         stage('Start Monitoring Stack') {
             steps {
                 echo "📊 Lancement de Prometheus, Grafana et Alertmanager..."
-                sh 'docker-compose -f docker-compose-monitoring.yml up -d'
+                sh 'docker-compose -f docker-compose.yml up -d'
             }
         }
 
-        // -----------------------
         // 7️⃣ Tests Unitaires et d’Intégration
-        // -----------------------
         stage('Unit & Integration Tests') {
             steps {
                 echo "🧪 Lancement des tests unitaires et d’intégration..."
@@ -85,20 +71,31 @@ pipeline {
             }
         }
 
-        // -----------------------
         // 8️⃣ Load Tests
-        // -----------------------
         stage('Load Tests') {
             steps {
                 echo "⚡ Lancement des tests de charge..."
                 sh 'docker run --rm -v $(pwd)/load-tests:/load-tests loadimpact/k6 run /load-tests/script.js'
             }
         }
+
+        // 9️⃣ (Optionnel) Analyse statique avec SonarQube
+        /*
+        stage('Static Analysis - SonarQube') {
+            steps {
+                echo "🔍 Analyse statique avec SonarQube..."
+                sh """
+                sonar-scanner \
+                  -Dsonar.projectKey=${APP_NAME} \
+                  -Dsonar.sources=. \
+                  -Dsonar.host.url=http://localhost:9000 \
+                  -Dsonar.login=${SONARQUBE_TOKEN}
+                """
+            }
+        }
+        */
     }
 
-    // -----------------------
-    // Post Actions
-    // -----------------------
     post {
         success {
             echo "✅ Pipeline terminé avec succès !"
